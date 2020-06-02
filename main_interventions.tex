@@ -1,0 +1,159 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+%%% SIR Model with Knowledge-Based Interventions.  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+  
+\documentclass[11pt]{article}
+  
+\setlength{\textheight}{9.0 in}
+\setlength{\textwidth}{6.5 in}
+\setlength{\oddsidemargin}{0 in}
+\setlength{\evensidemargin}{0 in}
+\setlength{\topmargin}{-0.5 in}
+
+\setlength{\parskip}{4pt}
+
+\usepackage{times}  
+\usepackage{amsfonts}  
+\usepackage{latexsym}  
+\usepackage{amsmath}  
+\usepackage[latin1]{inputenc}  
+\usepackage{varioref}  
+  
+\usepackage{fancybox}  
+\usepackage{shadow}  
+\usepackage{times}  
+\usepackage{amsmath}  
+\usepackage{amsfonts}  
+\usepackage{latexsym}  
+\usepackage{color}  
+\usepackage{graphicx}  
+%\usepackage{pstricks}  
+  
+\newtheorem{theorem}{Theorem}[section]  
+\newtheorem{lemma}[theorem]{Lemma}  
+\newtheorem{corollary}[theorem]{Corollary}  
+\newtheorem{fact}[theorem]{Fact}  
+\newtheorem{claim}[theorem]{Claim}  
+\newtheorem{observation}[theorem]{Observation}  
+\newtheorem{definition}[theorem]{Definition}  
+\newtheorem{proposition}[theorem]{Proposition}  
+\newtheorem{example}[theorem]{Example}  
+
+\newcommand{\cnp}{\textbf{NP}}
+\newcommand{\true}{\texttt{True}}
+\newcommand{\false}{\texttt{False}}
+  
+\newcommand{\calb}{\mbox{${\cal B}$}}  
+\newcommand{\calc}{\mbox{${\cal C}$}}  
+\newcommand{\calcp}{\mbox{${\cal C}'$}}  
+
+\newcommand{\calco}{\mbox{$\mathcal{C}_1$}}
+\newcommand{\calct}{\mbox{$\mathcal{C}_2$}}
+\newcommand{\calcop}{\mbox{$\mathcal{C}_1'$}}
+\newcommand{\calcodp}{\mbox{$\mathcal{C}_1''$}}
+
+\newcommand{\calcdp}{\mbox{${\cal C}''$}}  
+\newcommand{\calf}{\mbox{${\cal F}$}}  
+\newcommand{\cali}{\mbox{${\cal I}$}}  
+\newcommand{\calp}{\mbox{${\cal P}$}}  
+\newcommand{\cals}{\mbox{${\cal S}$}}  
+\newcommand{\calt}{\mbox{${\cal T}$}}  
+  
+\newcommand{\reach}{{\textsc{Reachability}}}
+\newcommand{\treach}{{$t$-\textsc{Reachability}}}
+
+ % box for end of proof  
+\newcommand{\QED}{\hfill\rule{2mm}{2mm}\medskip}   
+
+\newcommand{\irange}{\mbox{$1 \leq i \leq n$}}
+\newcommand{\jrange}{\mbox{$1 \leq j \leq m$}}
+
+\newcommand{\dunder}[1]{\underline{\underline{#1}}}
+
+ 
+%%% New commands for the three state values.
+\newcommand{\sstate}{\mbox{$\mathbb{S}$}}
+\newcommand{\istate}{\mbox{$\mathbb{I}$}}
+\newcommand{\rstate}{\mbox{$\mathbb{R}$}}
+
+%% New command for the set with the above three values.
+\newcommand{\bset}{\mbox{\{\sstate, \istate, \rstate\}}} 
+ 
+ 
+  
+\title{\textbf{SIR Model With Knowledge-Based Interventions}}
+
+%\vspace*{2ex}}  
+
+\author{  
+\vspace*{1ex}  
+}  
+  
+  
+\begin{document} 
+ 
+\maketitle  
+ 
+\baselineskip=1.4\normalbaselineskip
+
+\section{Introduction}
+  
+  We consider the SIR model when there are interventions chosen based on 
+  knowledge about the current configuration of the system.
+  In particular, we consider the case where the decision to choose an intervention is based on 
+  global knowledge of the overall configuration.
+  We consider a system with only one available intervention, 
+  but this assumption can be generalized to multiple available interventions.
+  
+  At each time step, we assume that the intervention is chosen whenever the total number of nodes 
+  in the infected state at that time step is at above a threshold value.
+  The value of the threshold could be specified as either a constant,
+  or as a fraction of the total number of nodes.
+  Because we consider the computational complexity of analyzing a given system for properties of interest,
+  we find it more appropriate to specify the threshold as a fraction.
+  
+  Note that we assume the system adopts to the disease spread by choosing to utilize the intervention based on 
+  global knowledge about the current configuration of the system.
+  The decision to utilize the intervention could be made individually by each node,
+  or centrally by appropriate authorities.
+  
+  A possible variation in the model is that if the threshold is reached, the intervention has to be maintained for 
+  at least a required minimum number of time steps.
+  
+  We assume that the intervention reduces the transmission probability of each edge by a given fraction.
+  An additional possibility is that a specified set of edges is deleted when the intervention occurs.
+  Another possibility is that each edge has two probabilities:
+  a base probability for when the intervention is not taking place,
+  and a reduced probability for when the intervention is indeed taking place.
+  This can model the situation when people who are more vulnerable 
+  due to such factors as age and pre-existing conditions
+  make more drastic modifications to their behavior when 
+  there are a large number of infected individuals in the general population.
+  
+\section{Formal Model}
+\label{sec:formal_model}
+
+We represent an SIR
+system by the underlying graph $G(V,E)$, with
+a given {\bf base} transmission probability $p_e$ for each
+edge $e \in E$. 
+We let $N_V$ denote the number of nodes in $G$.
+ 
+ The intervention is characterized by two fractions:
+a {\bf transmission reduction factor} $\alpha$, 
+and a {\bf threshold factor} $\beta$.
+We require that $0 < \alpha <1$, and $0 < \beta <1$.
+
+If, at a given time $t$, the number of nodes that are infected {\bf at} time $t$,
+i.e. the number of nodes that are in state $\istate$ at time $t$,
+ is at least $\beta N_V$,
+then the transmission probability of each edge $e$ is reduced to $\alpha \, p_e$.
+
+We consider the complexity of analyzing a given system for some property of interest.
+We can consider special cases, such as when all the transmission probabilities are equal,
+or when the underlying graph $G$ has some some special graph property.
+We can also consider the special cases that arise when certain parameters are fixed.
+Such parameters can include $\alpha$, $\beta$, and the base transmission probability.
+
+
+\end{document}
