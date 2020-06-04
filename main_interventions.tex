@@ -79,6 +79,53 @@
 %% New command for the set with the above three values.
 \newcommand{\bset}{\mbox{\{\sstate, \istate, \rstate\}}} 
  
+%%% General forms. -- New version (July 25, 2017)
+\newcommand{\tNewInfs}{\mbox{\textsc{Pr-Num-Inf-at}$\,(t, q, S)$}}
+\newcommand{\tNewInfv}{\mbox{\textsc{Pr-Num-Inf-at}$\,(t, q, V)$}}
+\newcommand{\tTotInfs}{\mbox{\textsc{Pr-Num-Inf-by}$\,(t, q, S)$}}
+\newcommand{\tTotInfv}{\mbox{\textsc{Pr-Num-Inf-by}$\,(t, q, V)$}}
+\newcommand{\tPeak}{\mbox{\textsc{Pr-Peak-Inf-at}$\,(t)$}}
+\newcommand{\tVuls}{\mbox{\textsc{Pr-Inf-at}\mbox{$\,(t, S)$}}}
+\newcommand{\tVulv}{\mbox{\textsc{Pr-Inf-at}\mbox{$\,(t, V)$}}}
+\newcommand{\tTotVuls}{\mbox{\textsc{Pr-Inf-by}\mbox{$\,(t, S)$}}}
+\newcommand{\tTotVulv}{\mbox{\textsc{Pr-Inf-by}\mbox{$\,(t, V)$}}}
+
+%%% Versions with t = 2. (New: July 25, 2017)
+\newcommand{\TwoNewInfs}{\mbox{\textsc{Pr-Num-Inf-at}$\,(2, q, S)$}}
+\newcommand{\TwoNewInfv}{\mbox{\textsc{Pr-Num-Inf-at}$\,(2, q, V)$}}
+\newcommand{\TwoTotInfs}{\mbox{\textsc{Pr-Num-Inf-By}$\,(2, q, S)$}}
+\newcommand{\TwoTotInfv}{\mbox{\textsc{Pr-Num-Inf-By}$\,(2, q, V)$}}
+\newcommand{\TwoPeak}{\mbox{\textsc{Pr-Peak-Inf-at}$\,(2)$}}
+\newcommand{\TwoVuls}{\mbox{\textsc{Pr-Inf-at}\mbox{$\,(2, S)$}}}
+\newcommand{\TwoVulv}{\mbox{\textsc{Pr-Inf-at}\mbox{$\,(2, V)$}}}
+\newcommand{\TwoTotVuls}{\mbox{\textsc{Pr-Inf-by}\mbox{$\,(2, S)$}}}
+\newcommand{\TwoTotVulv}{\mbox{\textsc{Pr-Inf-by}\mbox{$\,(2, V)$}}}
+
+%%% Versions with t = 1. (New: July 25, 2017)
+\newcommand{\OneNewInfs}{\mbox{\textsc{Pr-Num-Inf-at}$\,(1, q, S)$}}
+\newcommand{\OneNewInfv}{\mbox{\textsc{Pr-Num-Inf-at}$\,(1, q, V)$}}
+\newcommand{\OneTotInfs}{\mbox{\textsc{Pr-Num-Inf-by}$\,(1, q, S)$}}
+\newcommand{\OneTotInfv}{\mbox{\textsc{Pr-Num-Inf-by}$\,(1, q, V)$}}
+\newcommand{\OnePeak}{\mbox{\textsc{Pr-Peak-Inf-at}$\,(1)$}}
+\newcommand{\OneVuls}{\mbox{\textsc{Pr-Inf-at}\mbox{$\,(1, S)$}}}
+\newcommand{\OneVulv}{\mbox{\textsc{Pr-Inf-at}\mbox{$\,(1, V)$}}}
+\newcommand{\OneTotVuls}{\mbox{\textsc{Pr-Inf-by}\mbox{$\,(1, S)$}}}
+\newcommand{\OneTotVulv}{\mbox{\textsc{Pr-Inf-by}\mbox{$\,(1, V)$}}}
+
+%%% Version with t = 3. (New: July 25, 2017)
+\newcommand{\ThrNewInfs}{\mbox{\textsc{Pr-Num-Inf-at}$\,(3, q, S)$}}
+\newcommand{\ThrNewInfv}{\mbox{\textsc{Pr-Num-Inf-at}$\,(3, q, V)$}}
+\newcommand{\ThrTotInfs}{\mbox{\textsc{Pr-Num-Inf-by}$\,(3, q, S)$}}
+\newcommand{\ThrTotInfv}{\mbox{\textsc{Pr-Num-Inf-by}$\,(3, q, V)$}}
+
+%%%  Problems Involving an Intervention
+\newcommand{\Int}{\textsc{Pr-Intervention}}
+\newcommand{\tActivatedAt}{\mbox{\textsc{Pr-Activated-at}$\,t$}}
+\newcommand{\tActivatedBy}{\mbox{\textsc{Pr-Activated-by}$\,t$}}
+\newcommand{\NumActivations}{\mbox{\textsc{Pr-Num-Activations}$\,q$}}
+
+
+
  
   
 \title{\textbf{SIR Model With Knowledge-Based Interventions}}
@@ -97,6 +144,7 @@
 \baselineskip=1.4\normalbaselineskip
 
 \section{Introduction}
+\label{sec:introduction}
   
   We consider the SIR model when there are interventions chosen based on 
   knowledge about the current configuration of the system.
@@ -110,7 +158,7 @@
   The value of the threshold could be specified as either a constant,
   or as a fraction of the total number of nodes.
   Because we consider the computational complexity of analyzing a given system for properties of interest,
-  we find it more appropriate to specify the threshold as a fraction.
+  we consider it more appropriate to specify the threshold as a fraction.
   
   Note that we assume the system adopts to the disease spread by choosing to utilize the intervention based on 
   global knowledge about the current configuration of the system.
@@ -135,9 +183,8 @@
 
 We represent an SIR
 system by the underlying graph $G(V,E)$, with
-a given {\bf base} transmission probability $p_e$ for each
-edge $e \in E$. 
-We let $N_V$ denote the number of nodes in $G$.
+a given {\bf base} transmission probability $p_e$ for each edge $e \in E$. 
+%We let $N_V$ denote the number of nodes in $G$.
  
  The intervention is characterized by two fractions:
 a {\bf transmission reduction factor} $\alpha$, 
@@ -146,14 +193,128 @@ We require that $0 < \alpha <1$, and $0 < \beta <1$.
 
 If, at a given time $t$, the number of nodes that are infected {\bf at} time $t$,
 i.e. the number of nodes that are in state $\istate$ at time $t$,
- is at least $\beta N_V$,
-then the transmission probability of each edge $e$ is reduced to $\alpha \, p_e$.
+ is at least $\beta |V|$,
+then at time $t+1$, the transmission probability of each edge $e$ 
+is the reduced value $\alpha \, p_e$.
+In this case, 
+we say that the intervention is {\bf activated} at time $t$ and {\bf utilized} at time $t+1$.
 
-We consider the complexity of analyzing a given system for some property of interest.
+If, at a given time $t$, the number of nodes that are infected {\bf at} time $t$
+is less than $\beta |V|$,
+then at time $t+1$, the transmission probability of each edge $e$ is  $p_e$.
+We assume that at time $t=0$, the intervention is not utilized, 
+so all edges use their base transmission probability.
+Subsequently, for each $t \geq 1$,
+the intervention is utilized at time $t$ iff it is activated at time $t-1$.
+
+We refer to a SIR system with a knowledge-based intervention available as a {\bf SIR-KBE} system.
+A given SIR-KBE system is specified by underlying graph $G(V,E)$, 
+value $p_e$ for each edge $e \in E$,
+transmission reduction factor $\alpha$, and threshold factor $\beta$.
+
+
+
+We consider the complexity of analyzing a given system for various properties of interest.
 We can consider special cases, such as when all the transmission probabilities are equal,
 or when the underlying graph $G$ has some some special graph property.
 We can also consider the special cases that arise when certain parameters are fixed.
 Such parameters can include $\alpha$, $\beta$, and the base transmission probability.
 
+\section{Computational Problems for SIR-KBE Systems}
+\label{sec:computational_problems}
+
+All the computational problems for SIR systems 
+are also well-defined and meaningful for SIR-KBE systems.
+Moreover, there are additional problems pertaining to whether whether, when, and how often,
+the intervention is utilized. Some possible problems of interest are the following.
+
+\bigskip
+
+\noindent
+\textbf{Probability of an Intervention}~ (\Int)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBE system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention gets activated at least once.
+
+\bigskip
+
+\noindent
+\textbf{Number of Activations}~ ({\NumActivations})
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBE system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $q \geq 1$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention gets activated at least $q$ times.
+
+\bigskip
+
+\noindent
+\textbf{Probability of an Intervention Activated At a Given Time}~ (\tActivatedAt)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBE system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $t \geq 0$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention gets activated at time $t$.
+
+\bigskip
+
+\noindent
+\textbf{Probability of an Intervention Activated By a Given Time}~ (\tActivatedBy)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBE system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $t \geq 0$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention gets activated by time $t$.
+
+
+
+
+
+\bigskip
+
+\section{Computational Intractability Results for General Networks}
+\label{sec:general_results}
+
+The short-term forecasting reductions from our original paper 
+are generally applicable to SIR-KBE systems,
+since the reductions can construct problem instances where the intervention is never activated.
+If the threshold factor $\beta$ is part of the constructed problem instance,
+then it can be set so high that the intervention is never activated.
+
+If we want to consider instances where $\beta$ is fixed,
+then for problems involving the total number of infections and vulnerability,
+the reduction can be modified by adding a sufficiently large number of nodes 
+whose distance from the initially infected node is greater than the time $t$
+in the short-term forecasting problem.
+For the peak problem, 
+the base transmission probability for the edges incident on these extra nodes can be made so small, 
+that these nodes are very unlikely to be infected, 
+and so these extra nodes do not affect when the peak occurs. 
 
 \end{document}
