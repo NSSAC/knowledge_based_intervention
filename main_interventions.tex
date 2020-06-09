@@ -161,10 +161,12 @@
   we consider it more appropriate to specify the threshold as a fraction.
   
   Note that we assume the system adopts to the disease spread by choosing to utilize the intervention based on 
-  global knowledge about the current configuration of the system.
+  global knowledge about the current SIR configuration of the entire network.
   The decision to utilize the intervention could be made individually by each node,
   or centrally by appropriate authorities.
   
+  We assume that at each time step, 
+  a decision is made as to whether or not to utilize the the intervention for one time step.
   A possible variation in the model is that if the threshold is reached, the intervention has to be maintained for 
   at least a required minimum number of time steps.
   
@@ -181,16 +183,81 @@
 \section{Formal Model}
 \label{sec:formal_model}
 
-We represent an SIR
-system by the underlying graph $G(V,E)$, with
+We refer to a SIR system with a knowledge-based intervention available
+as a {\bf SIR-KBE} system.
+
+A given SIR-KBE system incorporates a {\bf base} SIR system,
+which is specified as an underlying graph $G(V,E)$, with
 a given {\bf base} transmission probability $p_e$ for each edge $e \in E$. 
 %We let $N_V$ denote the number of nodes in $G$.
  
- The intervention is characterized by two fractions:
-a {\bf transmission reduction factor} $\alpha$, 
-and a {\bf threshold factor} $\beta$.
-We require that $0 < \alpha <1$, and $0 < \beta <1$.
+The intervention is characterized by several parameters described in
+Table~\ref{tab:parameters}.
+The table also shows the constraints on the values of 
+these parameters.
 
+\smallskip
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|p{1.5in}|c|p{2in}|p{1in}|}\hline
+\textbf{Parameter Name} & \textbf{Symbol} & \textbf{Description} 
+                   & \textbf{Constraint(s)} \\ \hline\hline
+{Transmission reduction factor} & $\alpha$ 
+      & {Factor by which the transmission probability is reduced.}
+      & $0 < \alpha < 1$ \\ \hline
+Activation threshold & $\beta_A$
+      & {Lower bound on the fraction of nodes in state \istate{} 
+         to activate an intervention.}
+      & $0 < \beta_A < 1$ \\ \hline
+Deactivation threshold & $\beta_D$
+      & {Upper bound on the fraction of nodes in state \istate{}
+         to deactivate an intervention.}
+      & $0 < \beta_D < 1$ and  $\beta_D \leq \beta_A$ \\ \hline
+Activation delay & $\delta_A$ 
+      & {Number of time units before an intervention is activated.}
+      & $\delta_A  \geq 0$ \\ \hline
+Deactivation delay & $\delta_D$ 
+      & {Number of time units before the current intervention 
+         is deactivated.}
+      & $\delta_D \geq 0$ \\ \hline
+Intervention length & $\ell$ 
+      & {Number of time units for which an intervention is active.}
+      & $\ell \geq 1$ \\ \hline
+\end{tabular}
+\end{center}
+\caption{Descriptions of Parameters used in problem specifications} 
+\label{tab:parameters}
+\end{table}
+
+\iffalse
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{description}
+\item[transmission reduction factor] $\alpha$.
+\item[activation threshold] $\beta_A$.
+\item[deactivation threshold] $\beta_D$.
+\item[activation delay] $\delta_A$.
+\item[deactivation delay] $\delta_D$.
+\item[intervention length] $\ell$.
+\end{description}
+
+We require that $0 < \alpha < 1$, $0 < \beta_D \leq \beta_A < 1$,
+$\delta_A \geq 0$, $\delta_D \geq 0$, and $\ell \geq 1$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fi
+
+We now proceed to make the following simplifying assumptions:
+
+\begin{enumerate}
+\item
+$\beta_D = \beta_A$.
+\item
+$\delta_A = \delta_D = 1$.
+\item
+$\ell = 1$.
+\end{enumerate}
+
+Under these simplifying assumptions, a SIR-KBE system operates as follows.
 If, at a given time $t$, the number of nodes that are infected {\bf at} time $t$,
 i.e. the number of nodes that are in state $\istate$ at time $t$,
  is at least $\beta |V|$,
@@ -207,8 +274,8 @@ so all edges use their base transmission probability.
 Subsequently, for each $t \geq 1$,
 the intervention is utilized at time $t$ iff it is activated at time $t-1$.
 
-We refer to a SIR system with a knowledge-based intervention available as a {\bf SIR-KBE} system.
-A given SIR-KBE system is specified by underlying graph $G(V,E)$, 
+
+A given simplified SIR-KBE system is specified by underlying graph $G(V,E)$, 
 value $p_e$ for each edge $e \in E$,
 transmission reduction factor $\alpha$, and threshold factor $\beta$.
 
@@ -245,9 +312,8 @@ along with initial configuration \cali.
 event:~ the intervention gets activated at least once.
 
 \bigskip
-
 \noindent
-\textbf{Number of Activations}~ ({\NumActivations})
+\textbf{Number of Activations}~ (\NumActivations)
 
 \medskip
 \noindent
@@ -259,6 +325,9 @@ along with initial configuration \cali; integer $q \geq 1$.
 \noindent
 \underline{Requirement:}~ The probability of the following
 event:~ the intervention gets activated at least $q$ times.
+
+\medskip
+Note that the \Int{} problem is the same as the \NumActivations{} problem with $q = 1$.
 
 \bigskip
 
