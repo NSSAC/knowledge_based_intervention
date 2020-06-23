@@ -120,12 +120,17 @@
 
 %%%  Problems Involving an Intervention
 \newcommand{\Int}{\textsc{Pr-Intervention}}
-\newcommand{\tActivatedAt}{\mbox{\textsc{Pr-Activated-at}$\,t$}}
-\newcommand{\tActivatedBy}{\mbox{\textsc{Pr-Activated-by}$\,t$}}
-\newcommand{\NumActivations}{\mbox{\textsc{Pr-Num-Activations}$\,q$}}
-
-
-
+\newcommand{\tActiveAt}{\mbox{\textsc{Pr-Active-at}$\,t$}}
+\newcommand{\tActiveBy}{\mbox{\textsc{Pr-Active-by}$\,t$}}
+\newcommand{\NumActive}{\mbox{\textsc{Pr-Num-Active}$\,q$}}
+\newcommand{\MinActive}{\mbox{\textsc{Pr-Min-Active}$\,q$}}
+\newcommand{\NumInits}{\mbox{\textsc{Pr-Num-Init}$\,q$}}
+\newcommand{\MinInits}{\mbox{\textsc{Pr-Min-Init}$\,q$}}
+\newcommand{\NumActiveBy}{\mbox{\textsc{Pr-Num-Active-by}$\,(t,q)$}}
+\newcommand{\MinActiveBy}{\mbox{\textsc{Pr-Min-Active-by}$\,(t,q)$}}
+ \newcommand{\NumInitsBy}{\mbox{\textsc{Pr-Num-Init-By}$\,(t,q)$}}
+\newcommand{\MinInitsBy}{\mbox{\textsc{Pr-Min-Init-By}$\,(t,q)$}}
+ 
  
   
 \title{\textbf{SIR Model With Knowledge-Based Interventions}}
@@ -146,47 +151,59 @@
 \section{Introduction}
 \label{sec:introduction}
   
-  We consider the SIR model when there are interventions chosen based on 
+  We consider the SIR model when there is an available intervention 
+  that is chosen based on 
   knowledge about the current configuration of the system.
-  In particular, we consider the case where the decision to choose an intervention is based on 
-  global knowledge of the overall configuration.
+  In particular, we consider the case where the decision to choose the intervention is based on 
+  global knowledge of the overall configuration,
+  i.e., the SIR configuration of the entire network.
+  In practice, the decision to utilize the intervention could be made individually by each node,
+  or centrally by appropriate authorities.
+We refer to a SIR system with an available knowledge-based intervention 
+as a {\bf SIR-KBI} system.
+We define a somewhat general model of a SIR-KBI system,
+but for convenience, we focus on a simplified version of the model.
+
   We consider a system with only one available intervention, 
   but this assumption can be generalized to multiple available interventions.
   
-  At each time step, we assume that the intervention is chosen whenever the total number of nodes 
-  in the infected state at that time step is at above a threshold value.
+  We assume that the intervention is chosen based on whether the total number of nodes 
+  in the infected state at a given time step is at or above a threshold value.
   The value of the threshold could be specified as either a constant,
   or as a fraction of the total number of nodes.
   Because we consider the computational complexity of analyzing a given system for properties of interest,
   we consider it more appropriate to specify the threshold as a fraction.
   
-  Note that we assume the system adopts to the disease spread by choosing to utilize the intervention based on 
-  global knowledge about the current SIR configuration of the entire network.
-  The decision to utilize the intervention could be made individually by each node,
-  or centrally by appropriate authorities.
-  
-  We assume that at each time step, 
-  a decision is made as to whether or not to utilize the the intervention for one time step.
-  A possible variation in the model is that if the threshold is reached, the intervention has to be maintained for 
-  at least a required minimum number of time steps.
-  
-  We assume that the intervention reduces the transmission probability of each edge by a given fraction.
+    We assume that the intervention reduces the transmission probability of each edge by a given fraction.
   An additional possibility is that a specified set of edges is deleted when the intervention occurs.
   Another possibility is that each edge has two probabilities:
   a base probability for when the intervention is not taking place,
   and a reduced probability for when the intervention is indeed taking place.
-  This can model the situation when people who are more vulnerable 
+  Two probabilities per edge can model the situation when people who are more vulnerable 
   due to such factors as age and pre-existing conditions
   make more drastic modifications to their behavior when 
   there are a large number of infected individuals in the general population.
+ 
+ We consider both a simplified model and a more general model of a SIR-KBI system.
+ In the simplified model, we assume that at each time step, 
+  a decision is made as to whether or not to utilize the  intervention for the next time step,
+  based on a comparison between the current number of infected nodes
+   and the the required threshold number for the intervention.
+  In the more general model, 
+  there can be different thresholds for starting and stopping the intervention,
+  a delay in stopping and starting the intervention,
+  and a required minimum number of time steps that the intervention has to be maintained for.
   
+  
+
+ 
+
 \section{Formal Model}
 \label{sec:formal_model}
 
-We refer to a SIR system with a knowledge-based intervention available
-as a {\bf SIR-KBE} system.
 
-A given SIR-KBE system incorporates a {\bf base} SIR system,
+
+A given SIR-KBI system incorporates a {\bf base} SIR system,
 which is specified as an underlying graph $G(V,E)$, with
 a given {\bf base} transmission probability $p_e$ for each edge $e \in E$. 
 %We let $N_V$ denote the number of nodes in $G$.
@@ -210,20 +227,20 @@ Activation threshold & $\beta_A$
       & {Lower bound on the fraction of nodes in state \istate{} 
          to activate an intervention.}
       & $0 < \beta_A < 1$ \\ \hline
-Deactivation threshold & $\beta_D$
+Continuation threshold & $\beta_C$
       & {Upper bound on the fraction of nodes in state \istate{}
-         to deactivate an intervention.}
-      & $0 < \beta_D < 1$ and  $\beta_D \leq \beta_A$ \\ \hline
+         to continue an intervention.}
+      & $0 < \beta_C \leq  \beta_A$ \\ \hline
 Activation delay & $\delta_A$ 
-      & {Number of time units before an intervention is activated.}
+      & {Number of time units before an intervention becomes active.}
       & $\delta_A  \geq 0$ \\ \hline
 Deactivation delay & $\delta_D$ 
-      & {Number of time units before the current intervention 
-         is deactivated.}
-      & $\delta_D \geq 0$ \\ \hline
+      & {Number of time units before a discontinued intervention 
+        becomes inactive.}
+      & $\delta_D \geq 1$ \\ \hline
 Intervention length & $\ell$ 
-      & {Number of time units for which an intervention is active.}
-      & $\ell \geq 1$ \\ \hline
+      & {Minimum Number of time units for which an intervention must be active.}
+      & $\ell \geq \delta_D$ \\ \hline
 \end{tabular}
 \end{center}
 \caption{Descriptions of Parameters used in problem specifications} 
@@ -246,36 +263,30 @@ $\delta_A \geq 0$, $\delta_D \geq 0$, and $\ell \geq 1$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \fi
 
-We now proceed to make the following simplifying assumptions:
+If the intervention is {\bf inactive} at a given time $t$,
+then  the transmission probability of each edge $e$ is $p_e$,
+and if the intervention is {\bf active} at a given time $t$,
+then  the transmission probability of each edge $e$ is the reduced value $\alpha \, p_e$.
 
+
+We now proceed to make the following simplifying assumptions:
 \begin{enumerate}
 \item
-$\beta_D = \beta_A$.
+$\beta_C = \beta_A$. (In this case, we use the symbol $\beta$ to denote the common threshold.)
 \item
 $\delta_A = \delta_D = 1$.
 \item
 $\ell = 1$.
 \end{enumerate}
 
-Under these simplifying assumptions, a SIR-KBE system operates as follows.
-If, at a given time $t$, the number of nodes that are infected {\bf at} time $t$,
-i.e. the number of nodes that are in state $\istate$ at time $t$,
- is at least $\beta |V|$,
-then at time $t+1$, the transmission probability of each edge $e$ 
-is the reduced value $\alpha \, p_e$.
-In this case, 
-we say that the intervention is {\bf activated} at time $t$ and {\bf utilized} at time $t+1$.
+Under these simplifying assumptions, a SIR-KBI system operates as follows.
+Initially, at $t = 0$, the intervention is inactive.
+For $t > 0$, the intervention is active at time $t$
+iff the number of nodes that are infected at time $t-1$,
+i.e., the number of nodes that are in state $\istate$ at time $t-1$,
+ is at least $\beta |V|$.
 
-If, at a given time $t$, the number of nodes that are infected {\bf at} time $t$
-is less than $\beta |V|$,
-then at time $t+1$, the transmission probability of each edge $e$ is  $p_e$.
-We assume that at time $t=0$, the intervention is not utilized, 
-so all edges use their base transmission probability.
-Subsequently, for each $t \geq 1$,
-the intervention is utilized at time $t$ iff it is activated at time $t-1$.
-
-
-A given simplified SIR-KBE system is specified by underlying graph $G(V,E)$, 
+A given simplified SIR-KBI system is specified by underlying graph $G(V,E)$, 
 value $p_e$ for each edge $e \in E$,
 transmission reduction factor $\alpha$, and threshold factor $\beta$.
 
@@ -287,13 +298,14 @@ or when the underlying graph $G$ has some some special graph property.
 We can also consider the special cases that arise when certain parameters are fixed.
 Such parameters can include $\alpha$, $\beta$, and the base transmission probability.
 
-\section{Computational Problems for SIR-KBE Systems}
+\section{Computational Problems for SIR-KBI Systems}
 \label{sec:computational_problems}
 
 All the computational problems for SIR systems 
-are also well-defined and meaningful for SIR-KBE systems.
-Moreover, there are additional problems pertaining to whether whether, when, and how often,
+are also well-defined and meaningful for SIR-KBI systems.
+Moreover, there are additional problems pertaining to  whether, when, and how often,
 the intervention is utilized. Some possible problems of interest are the following.
+For convenience, we describe these problems for simplified SIR-KBI systems.
 
 \bigskip
 
@@ -302,64 +314,193 @@ the intervention is utilized. Some possible problems of interest are the followi
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBE system $G(V,E)$ with a base transmission probability for each edge,
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
 transmission reduction factor $\alpha$, threshold factor $\beta$;
 along with initial configuration \cali.
 
 \smallskip
 \noindent
 \underline{Requirement:}~ The probability of the following
-event:~ the intervention gets activated at least once.
+event:~ the intervention is active for at least one time unit.
 
 \bigskip
 \noindent
-\textbf{Number of Activations}~ (\NumActivations)
+\textbf{Number Active}~ (\NumActive)
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBE system $G(V,E)$ with a base transmission probability for each edge,
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $q \geq 0$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention is active during exactly $q$ time units (not necessarily continuously).
+
+\bigskip
+\noindent
+\textbf{Minimum Active}~ (\MinActive)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
 transmission reduction factor $\alpha$, threshold factor $\beta$;
 along with initial configuration \cali; integer $q \geq 1$.
 
 \smallskip
 \noindent
 \underline{Requirement:}~ The probability of the following
-event:~ the intervention gets activated at least $q$ times.
+event:~ the intervention is active during at least $q$ time units.
 
 \medskip
-Note that the \Int{} problem is the same as the \NumActivations{} problem with $q = 1$.
+Note that the \Int{} problem is the same as the \MinActive{} problem with $q = 1$,
+and also corresponds to the complementary event to that in the  \NumActive{} problem with $q = 0$.
 
 \bigskip
+We can also define timed versions of the above problems, as follows.
 
+\bigskip
 \noindent
-\textbf{Probability of an Intervention Activated At a Given Time}~ (\tActivatedAt)
+\textbf{Probability Intervention Active At a Given Time}~ (\tActiveAt)
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBE system $G(V,E)$ with a base transmission probability for each edge,
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
 transmission reduction factor $\alpha$, threshold factor $\beta$;
 along with initial configuration \cali; integer $t \geq 0$.
 
 \smallskip
 \noindent
 \underline{Requirement:}~ The probability of the following
-event:~ the intervention gets activated at time $t$.
+event:~ the intervention is active at time $t$.
 
 \bigskip
 
 \noindent
-\textbf{Probability of an Intervention Activated By a Given Time}~ (\tActivatedBy)
+\textbf{Probability of an Intervention Active By a Given Time}~ (\tActiveBy)
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBE system $G(V,E)$ with a base transmission probability for each edge,
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
 transmission reduction factor $\alpha$, threshold factor $\beta$;
 along with initial configuration \cali; integer $t \geq 0$.
 
 \smallskip
 \noindent
 \underline{Requirement:}~ The probability of the following
-event:~ the intervention gets activated by time $t$.
+event:~ the intervention is active for at least one step by time $t$.
+
+
+
+\bigskip
+
+\noindent
+\textbf{Number Active By a Given Time}~ (\NumActiveBy)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $t \geq 0$; integer $q \geq 0$..
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention is active for exactly $q$ time steps prior to $t+1$.
+
+
+\bigskip
+
+\noindent
+\textbf{Min Active By a Given Time}~ (\MinActiveBy)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $t \geq 0$; integer $q \geq 0$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention is active for at least $q$ time steps prior to $t+1$.
+
+
+\bigskip
+
+We can also consider the number of times that the intervention is initiated.
+We say that the intervention is {\bf initiated} at time $t$ if the intervention is active at time $t$,
+but not active during the preceding time period.
+Thus, a sequence of consecutive time steps when the intervention is active is counted
+as a single initiation.
+
+\bigskip
+\noindent
+\textbf{Number Initializations}~ (\NumInits)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $q \geq 0$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention is initiated exactly $q$ times.
+
+
+\bigskip
+\noindent
+\textbf{Minimum Initializations}~ (\MinInits)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $q \geq 1$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention is initiated at least $q$ times.
+
+
+\bigskip
+\noindent
+\textbf{Number Initializations By a Given Time}~ (\NumInitsBy)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $t \geq 0$; integer $q \geq 0$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention is initiated exactly $q$ times prior to $t+1$.
+
+
+\bigskip
+\noindent
+\textbf{Minimum Initializations By a Given Time}~ (\MinInitsBy)
+
+\medskip
+\noindent
+\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
+transmission reduction factor $\alpha$, threshold factor $\beta$;
+along with initial configuration \cali; integer $t \geq 0$; integer $q \geq 1$.
+
+\smallskip
+\noindent
+\underline{Requirement:}~ The probability of the following
+event:~ the intervention is initiated at least $q$ times prior to $t+1$.
+
+
+
+
 
 
 
@@ -371,7 +512,7 @@ event:~ the intervention gets activated by time $t$.
 \label{sec:general_results}
 
 The short-term forecasting reductions from our original paper 
-are generally applicable to SIR-KBE systems,
+are generally applicable to SIR-KBI systems,
 since the reductions can construct problem instances where the intervention is never activated.
 If the threshold factor $\beta$ is part of the constructed problem instance,
 then it can be set so high that the intervention is never activated.
