@@ -208,7 +208,7 @@ which is specified as an underlying graph $G(V,E)$, with
 a given {\bf base} transmission probability $p_e$ for each edge $e \in E$. 
 %We let $N_V$ denote the number of nodes in $G$.
  
-The intervention is characterized by several parameters described in
+The intervention is characterized by several parameters, described in
 Table~\ref{tab:parameters}.
 The table also shows the constraints on the values of 
 these parameters.
@@ -224,18 +224,18 @@ these parameters.
       & {Factor by which the transmission probability is reduced.}
       & $0 < \alpha < 1$ \\ \hline
 Activation threshold & $\beta_A$
-      & {Lower bound on the fraction of nodes in state \istate{} 
-         to activate an intervention.}
+      & {Fraction of nodes in state \istate{} 
+         required to activate an intervention.}
       & $0 < \beta_A < 1$ \\ \hline
 Continuation threshold & $\beta_C$
-      & {Upper bound on the fraction of nodes in state \istate{}
-         to continue an intervention.}
+      & {Fraction of nodes in state \istate{}
+         required to continue an intervention.}
       & $0 < \beta_C \leq  \beta_A$ \\ \hline
 Activation delay & $\delta_A$ 
       & {Number of time units before an intervention becomes active.}
       & $\delta_A  \geq 0$ \\ \hline
 Deactivation delay & $\delta_D$ 
-      & {Number of time units before a discontinued intervention 
+      & {Number of time units before an active intervention 
         becomes inactive.}
       & $\delta_D \geq 1$ \\ \hline
 Intervention length & $\ell$ 
@@ -268,8 +268,8 @@ then  the transmission probability of each edge $e$ is $p_e$,
 and if the intervention is {\bf active} at a given time $t$,
 then  the transmission probability of each edge $e$ is the reduced value $\alpha \, p_e$.
 
-
-We now proceed to make the following simplifying assumptions:
+We define a {\bf simple} SIR-KBI system to be a SIR-KBI system that satisfies 
+the following simplifying assumptions:
 \begin{enumerate}
 \item
 $\beta_C = \beta_A$. (In this case, we use the symbol $\beta$ to denote the common threshold.)
@@ -279,24 +279,207 @@ $\delta_A = \delta_D = 1$.
 $\ell = 1$.
 \end{enumerate}
 
-Under these simplifying assumptions, a SIR-KBI system operates as follows.
+A given {\bf simple} SIR-KBI system \cals{} is specified by underlying graph $G(V,E)$, 
+value $p_e$ for each edge $e \in E$,
+transmission reduction factor $\alpha$, and threshold $\beta$.
+A given {\bf general} SIR-KBI system \cals{} is specified by underlying graph $G(V,E)$, 
+value $p_e$ for each edge $e \in E$,
+transmission reduction factor $\alpha$, activation threshold $\beta_A$, 
+continuation threshold $\beta_C$,
+activation delay $\delta_A$, 
+deactivation delay $\delta_D$, 
+and intervention length $\ell$.
+
+In discussing the operation of a SIR-KBI system, we let $\istate_t$
+denote the number of nodes that are in the infected state, \istate, at a given time $t$.
+Also, it is convenient to use the following concept of the intervention being initiated.
+We say that the intervention is {\bf initiated} at time $t$ if the intervention is active at time $t$,
+but not active during the preceding time period.
+Thus, a sequence of consecutive time steps when the intervention is active is considered to be 
+part of a single initiation.
+
+A simple SIR-KBI system operates as follows.
 Initially, at $t = 0$, the intervention is inactive.
 For $t > 0$, the intervention is active at time $t$
-iff the number of nodes that are infected at time $t-1$,
-i.e., the number of nodes that are in state $\istate$ at time $t-1$,
- is at least $\beta |V|$.
+iff there are at least $\beta |V|$ infected nodes at time $t-1$,
+i.e., iff $\istate_{t-1} \geq \beta |V|$.
 
-A given simplified SIR-KBI system is specified by underlying graph $G(V,E)$, 
-value $p_e$ for each edge $e \in E$,
-transmission reduction factor $\alpha$, and threshold factor $\beta$.
+In describing the operation of a general SIR-KBI system,
+we use the concepts of the intervention being {\bf scheduled to initiate},
+{\bf eligible to deactivate}, and {\bf scheduled to deactivate}.
+If the initiation is initiated at a given time $t$, then it is eligible to deactivate at time $t + \ell$.
+A general SIR-KBI system operates as follows.
+In this description, there is some arbitrariness in specifying the effect of the delay 
+in activating and in deactivating the intervention, 
+and so alternate specifications might be more appropriate.
+
+\begin{description}
+\item
+[Case 1:]
+{\bf $t > 0$ and the intervention was inactive at time $t\!-\!1$, or $t= 0$.}
+\begin{description}
+\item
+[Case 1A:]
+{\bf The intervention is not yet scheduled to initiate.}
+
+\begin{description}
+\item
+[Case 1A1:] 
+{\bf $\istate_t<\beta_A \, |V|$.}
+
+Then the activation is inactive at time $t$, and is still not scheduled to initiate.
+
+\item
+[Case 1A2:] 
+{\bf $\istate_t \geq \beta_A \, |V|$ and $\delta_A > 0$.}
+
+Then the activation is inactive at time $t$, and is scheduled to initiate at time $t + \delta_A$.
+
+\item
+[Case 1A3:] 
+{\bf $\istate_t \geq \beta_A \, |V|$ and $\delta_A = 0$.}
+
+Then the activation is initiated at time $t$
+and is eligible to deactivate at time $t+\ell$,
+but is not scheduled to deactivate.
+
+\end{description}
+
+\item
+[Case 1B:]
+{\bf The intervention is scheduled to initiate at time $t$.}
+
+\begin{description}
+\item
+[Case 1B1:] 
+{\bf $\istate_t \geq \beta_C \, |V|$.}
+
+Then the intervention is initiated at time $t$ and is eligible to deactivate at time $t+\ell$,
+but is not scheduled to deactivate.
+
+\item
+[Case 1B2:] 
+{\bf $\istate_t < \beta_C \, |V|$ and $\delta_D > 0$.}
+
+Then the intervention is initiated at time $t$, is eligible to deactivate at time $t+\ell$,
+and is scheduled to deactivate at time $t + \mbox{max}(l, \delta_D)$.
+
+\item
+[Case 1B3:] 
+{\bf $\istate_t < \beta_C \, |V|$ and $\delta_D = 0$.}
+
+Then the intervention remains inactive at time $t$, and is no longer scheduled to initiate.
+\end{description}
+
+\item
+[Case 1C:]
+{\bf The intervention is scheduled to initiate at time $t'$ where $t' > t$.}
+
+Then the intervention remains inactive at time $t$, 
+and is still scheduled to initiate at time $t'$.
+\end{description}
+
+\item
+[Case 2:]
+{\bf $t > 0$ and the intervention was active at time $t\!-\!1$.}
+\begin{description}
+\item
+[Case 2A:]
+{\bf The intervention is not yet scheduled to deactivate.}
+\begin{description}
+\item
+[Case 2A1:] 
+{\bf $\istate_t \geq \beta_C \, |V|$.}
+
+Then the activation remains active at time $t$, and is still not scheduled to  deactivate.
+\item
+[Case 2A2:] 
+{\bf $\istate_t < \beta_C \, |V|$ and $\delta_D > 0$.}
+
+Then the activation remains active at time $t$.
+Let $t'$ be the time when the activation is eligible to deactivate.
+The activation is scheduled to deactivate at time $\mbox{max}(t', t+\delta_D)$.
+\item
+[Case 2A3:] 
+{\bf $\istate_t < \beta_C \, |V|$ and $\delta_D = 0$.}
+
+Let $t'$ be the time when the activation is eligible to deactivate.
+If $t \geq t'$, then the activation is made inactive at time $t$, and is  not scheduled to initiate.
+If $t < t'$, then the activation is scheduled to deactivate at time $t'$.
+\end{description}
+
+\item
+[Case 2B:]
+{\bf The intervention is scheduled to deactivate at time $t$.}
+\begin{description}
+\item
+[Case 2B1:] 
+{\bf $\istate_t < \beta_C \, |V|$.}
+
+Then the activation is made inactive at time $t$, and is not scheduled to activate.
+\item
+[Case 2B2:] 
+{\bf $\beta_C \, |V| \leq \istate_t < \beta_A \, |V|$.}
+
+Then the activation remains active at time $t$,
+but is now scheduled to deactivate at time $t+1$.
+(Alternately, in this case the system can be designed to deactivate the intervention,
+or to continue the intervention and no longer have it scheduled to deactivate.)
+\item
+[Case 2B3:] 
+{\bf $\beta_A \, |V| \leq \istate_t$.}
+
+Then the intervention remains active and is no longer scheduled to deactivate.
+\end{description}
+\item
+[Case 2C:]
+{\bf The intervention is scheduled to deactivate at time $t'$ where $t' > t$.}
+\begin{description}
+\item
+[Case 2C1:] 
+{\bf $\istate_t < \beta_C \, |V|$.}
+
+Then the activation remains active at time $t$,
+but is now scheduled to deactivate at time $t+1$.
+\item
+[Case 2C2:] 
+{\bf $\beta_C \, |V| \leq \istate_t < \beta_A \, |V|$.}
+
+Then the activation remains active at time $t$,
+and is still scheduled to deactivate at time $t'$.
+(Alternately, in this case the system can be designed 
+to continue the intervention and no longer have it scheduled to deactivate.)
+\item
+[Case 2C3:] 
+{\bf $\beta_A \, |V| \leq \istate_t$.}
+
+Then the intervention remains active and is no longer scheduled to deactivate.
+\end{description}
+
+
+\end{description}
+
+\end{description}
 
 
 
-We consider the complexity of analyzing a given system for various properties of interest.
+\bigskip
+
+We consider the computational complexity of analyzing a given SIR-KBI system 
+for various properties of interest.
+In general, hardness results are stronger when they apply to simple SIR-KBI systems,
+and easiness results are stronger when they apply to general SIR-KBI systems.
+
 We can consider special cases, such as when all the transmission probabilities are equal,
 or when the underlying graph $G$ has some some special graph property.
 We can also consider the special cases that arise when certain parameters are fixed.
-Such parameters can include $\alpha$, $\beta$, and the base transmission probability.
+Such parameters for simple  SIR-KBI systems 
+can include $\alpha$, $\beta$, and the base transmission probability.
+
+
+
+
+
 
 \section{Computational Problems for SIR-KBI Systems}
 \label{sec:computational_problems}
@@ -305,7 +488,7 @@ All the computational problems for SIR systems
 are also well-defined and meaningful for SIR-KBI systems.
 Moreover, there are additional problems pertaining to  whether, when, and how often,
 the intervention is utilized. Some possible problems of interest are the following.
-For convenience, we describe these problems for simplified SIR-KBI systems.
+All these problems are applicable to both simple and general SIR-KBI systems.
 
 \bigskip
 
@@ -314,14 +497,14 @@ For convenience, we describe these problems for simplified SIR-KBI systems.
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali.
+\underline{Instance:}~ A SIR-KBI system \cals,
+and initial configuration \cali.
 
 \smallskip
 \noindent
 \underline{Requirement:}~ The probability of the following
 event:~ the intervention is active for at least one time unit.
+
 
 \bigskip
 \noindent
@@ -329,14 +512,15 @@ event:~ the intervention is active for at least one time unit.
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $q \geq 0$.
+\underline{Instance:}~ A SIR-KBI system \cals,
+initial configuration \cali,
+and  integer $q \geq 0$.
 
 \smallskip
 \noindent
 \underline{Requirement:}~ The probability of the following
 event:~ the intervention is active during exactly $q$ time units (not necessarily continuously).
+
 
 \bigskip
 \noindent
@@ -344,9 +528,8 @@ event:~ the intervention is active during exactly $q$ time units (not necessaril
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $q \geq 1$.
+\underline{Instance:}~ A SIR-KBI system \cals,
+initial configuration \cali, integer $q \geq 1$.
 
 \smallskip
 \noindent
@@ -360,31 +543,30 @@ and also corresponds to the complementary event to that in the  \NumActive{} pro
 \bigskip
 We can also define timed versions of the above problems, as follows.
 
+
 \bigskip
 \noindent
 \textbf{Probability Intervention Active At a Given Time}~ (\tActiveAt)
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $t \geq 0$.
+\underline{Instance:}~A SIR-KBI system \cals,
+initial configuration \cali, integer $t \geq 0$.
 
 \smallskip
 \noindent
 \underline{Requirement:}~ The probability of the following
 event:~ the intervention is active at time $t$.
 
-\bigskip
 
+\bigskip
 \noindent
 \textbf{Probability of an Intervention Active By a Given Time}~ (\tActiveBy)
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $t \geq 0$.
+\underline{Instance:}~ A SIR-KBI system \cals,
+initial configuration \cali, integer $t \geq 0$.
 
 \smallskip
 \noindent
@@ -400,9 +582,8 @@ event:~ the intervention is active for at least one step by time $t$.
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $t \geq 0$; integer $q \geq 0$..
+\underline{Instance:}~ A SIR-KBI system \cals,
+initial configuration \cali, integer $t \geq 0$; integer $q \geq 0$..
 
 \smallskip
 \noindent
@@ -417,9 +598,8 @@ event:~ the intervention is active for exactly $q$ time steps prior to $t+1$.
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $t \geq 0$; integer $q \geq 0$.
+\underline{Instance:}~ A SIR-KBI system \cals,
+initial configuration \cali, integer $t \geq 0$; integer $q \geq 0$.
 
 \smallskip
 \noindent
@@ -435,15 +615,15 @@ but not active during the preceding time period.
 Thus, a sequence of consecutive time steps when the intervention is active is counted
 as a single initiation.
 
+
 \bigskip
 \noindent
 \textbf{Number Initializations}~ (\NumInits)
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $q \geq 0$.
+\underline{Instance:}~ A SIR-KBI system \cals,
+initial configuration \cali, integer $q \geq 0$.
 
 \smallskip
 \noindent
@@ -457,9 +637,8 @@ event:~ the intervention is initiated exactly $q$ times.
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $q \geq 1$.
+\underline{Instance:}~ A SIR-KBI system \cals,
+initial configuration \cali, integer $q \geq 1$.
 
 \smallskip
 \noindent
@@ -473,9 +652,8 @@ event:~ the intervention is initiated at least $q$ times.
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $t \geq 0$; integer $q \geq 0$.
+\underline{Instance:}~ A SIR-KBI system \cals,
+initial configuration \cali, integer $t \geq 0$; integer $q \geq 0$.
 
 \smallskip
 \noindent
@@ -489,9 +667,8 @@ event:~ the intervention is initiated exactly $q$ times prior to $t+1$.
 
 \medskip
 \noindent
-\underline{Instance:}~ An SIR-KBI system $G(V,E)$ with a base transmission probability for each edge,
-transmission reduction factor $\alpha$, threshold factor $\beta$;
-along with initial configuration \cali; integer $t \geq 0$; integer $q \geq 1$.
+\underline{Instance:}~ A SIR-KBI system \cals,
+initial configuration \cali, integer $t \geq 0$; integer $q \geq 1$.
 
 \smallskip
 \noindent
