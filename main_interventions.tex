@@ -130,7 +130,9 @@
 \newcommand{\MinActiveBy}{\mbox{\textsc{Pr-Min-Active-by}$\,(t,q)$}}
  \newcommand{\NumInitsBy}{\mbox{\textsc{Pr-Num-Init-By}$\,(t,q)$}}
 \newcommand{\MinInitsBy}{\mbox{\textsc{Pr-Min-Init-By}$\,(t,q)$}}
- 
+
+%%% Interventions with t = 1. 
+ \newcommand{\OneActiveAt}{\mbox{\textsc{Pr-Active-at}$\,1$}}
  
   
 \title{\textbf{SIR Model With Knowledge-Based Interventions}}
@@ -320,7 +322,7 @@ and so alternate specifications might be more appropriate.
 \begin{description}
 \item
 [Case 1A:]
-{\bf The intervention is not yet scheduled to initiate.}
+{\bf The intervention is not scheduled to initiate.}
 
 \begin{description}
 \item
@@ -377,6 +379,7 @@ Then the intervention remains inactive at time $t$, and is no longer scheduled t
 
 Then the intervention remains inactive at time $t$, 
 and is still scheduled to initiate at time $t'$.
+(Alternately, if $\istate_t < \beta_C \, |V|$, the intervention might no longer be scheduled to initiate.)
 \end{description}
 
 \item
@@ -440,7 +443,7 @@ Then the intervention remains active and is no longer scheduled to deactivate.
 {\bf $\istate_t < \beta_C \, |V|$.}
 
 Then the activation remains active at time $t$,
-but is now scheduled to deactivate at time $t+1$.
+and is still scheduled to deactivate at time $t'$.
 \item
 [Case 2C2:] 
 {\bf $\beta_C \, |V| \leq \istate_t < \beta_A \, |V|$.}
@@ -448,7 +451,7 @@ but is now scheduled to deactivate at time $t+1$.
 Then the activation remains active at time $t$,
 and is still scheduled to deactivate at time $t'$.
 (Alternately, in this case the system can be designed 
-to continue the intervention and no longer have it scheduled to deactivate.)
+to continue the intervention and no longer be scheduled to deactivate.)
 \item
 [Case 2C3:] 
 {\bf $\beta_A \, |V| \leq \istate_t$.}
@@ -474,7 +477,7 @@ We can consider special cases, such as when all the transmission probabilities a
 or when the underlying graph $G$ has some some special graph property.
 We can also consider the special cases that arise when certain parameters are fixed.
 Such parameters for simple  SIR-KBI systems 
-can include $\alpha$, $\beta$, and the base transmission probability.
+can include $\alpha$, $\beta$, and a uniform base transmission probability.
 
 
 
@@ -571,9 +574,7 @@ initial configuration \cali, integer $t \geq 0$.
 \smallskip
 \noindent
 \underline{Requirement:}~ The probability of the following
-event:~ the intervention is active for at least one step by time $t$.
-
-
+event:~ the intervention is active for at least one time unit prior to $t+1$.
 
 \bigskip
 
@@ -588,7 +589,7 @@ initial configuration \cali, integer $t \geq 0$; integer $q \geq 0$..
 \smallskip
 \noindent
 \underline{Requirement:}~ The probability of the following
-event:~ the intervention is active for exactly $q$ time steps prior to $t+1$.
+event:~ the intervention is active for exactly $q$ time units prior to $t+1$.
 
 
 \bigskip
@@ -612,9 +613,6 @@ event:~ the intervention is active for at least $q$ time steps prior to $t+1$.
 We can also consider the number of times that the intervention is initiated.
 We say that the intervention is {\bf initiated} at time $t$ if the intervention is active at time $t$,
 but not active during the preceding time period.
-Thus, a sequence of consecutive time steps when the intervention is active is counted
-as a single initiation.
-
 
 \bigskip
 \noindent
@@ -703,5 +701,40 @@ For the peak problem,
 the base transmission probability for the edges incident on these extra nodes can be made so small, 
 that these nodes are very unlikely to be infected, 
 and so these extra nodes do not affect when the peak occurs. 
+
+
+
+\bigskip
+
+\section{Efficiently Solvable Problems}
+\label{sec:efficiently_solvable}
+
+Several short term forecasting problems involving interventions are solvable in polynomial time. 
+Some of these results are the following.
+
+\begin{theorem}\label{thm:gen_easiness}
+For simple SIR-KBI systems, the problem \tActiveAt~ is solvable in linear time for $t$ equal to 0,1, and 2.
+\end{theorem}
+\noindent
+\textbf{Proof:}~ 
+
+For a simple SIR-KBI system, by definition, the intervention is inactive at time 0.
+Thus, \textsc{Pr-Active-at} $(0) = 0$.
+
+The intervention is active at time $t=1$ iff $\istate_0 \geq \beta |V|$, i.e.,
+iff there are at least $\beta |V|$ infected nodes in the given initial configuration \cali{}.
+Thus, if $| \cali | < \beta |V|$, then \textsc{Pr-Active-at} $(1) = 0$;
+otherwise, \textsc{Pr-Active-at} $(1) = 1$
+
+The intervention is active at time $t=2$ iff $\istate_1 \geq \beta |V|$.
+The probability that a given node is infected  at time 1 is determined by \cali{} 
+and the base edge transmission probabilities when the intervention is inactive.
+Thus,  \textsc{Pr-Active-at} $(2) =$ \textsc{Pr-Num-Inf-at}$\,(1, \beta |V|, |V|)$ for the base SIR system.
+We have shown elsewhere that the problem \OneNewInfs{} can be solved in linear time for
+arbitrary $q$ and $S$.
+
+
+\QED
+
 
 \end{document}
